@@ -1,7 +1,6 @@
 package spinlock
 
 import (
-	"runtime"
 	"sync/atomic"
 )
 
@@ -11,7 +10,6 @@ type Spinlock struct {
 
 func (s *Spinlock) Lock() {
 	for !s.TryLock() {
-		runtime.Gosched()
 	}
 }
 
@@ -32,7 +30,6 @@ type TTAS struct {
 func (s *TTAS) Lock() {
 	for {
 		for s.locked.Load() {
-			runtime.Gosched()
 		}
 
 		if s.TryLock() {

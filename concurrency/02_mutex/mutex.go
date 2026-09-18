@@ -2,7 +2,6 @@ package mutex
 
 import (
 	"primitives/internal/futex"
-	"runtime"
 	"sync/atomic"
 )
 
@@ -28,12 +27,10 @@ func (m *Mutex) Lock() {
 				if atomic.LoadUint32(&m.state) == free {
 					break
 				}
-				runtime.Gosched()
 			}
 
 			futex.Wait(&m.state, contended)
 		}
-		runtime.Gosched()
 		if atomic.CompareAndSwapUint32(&m.state, free, contended) {
 			return
 		}
